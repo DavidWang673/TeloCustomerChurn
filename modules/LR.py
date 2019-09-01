@@ -20,7 +20,7 @@ if abs(n_positive/n_negative - 1) <0.2:
 else:
 	print("imbalanced data, do not choose 'accuracy' as metric")
 
-lr = LogisticRegression(n_jobs=-1)
+lr = LogisticRegression(n_jobs=-1,max_iter=10000,solver='saga')
 
 X_train, X_test, Y_train, Y_test = train_test_split(\
 	X, Y, test_size=0.3, random_state=0)
@@ -30,8 +30,8 @@ X_train, X_test, Y_train, Y_test = X_train.values, X_test.values, Y_train.values
 # CV 选择最佳参数
 tuned_parameters = { 'penalty': ['l1','l2'],
                      'C':[0.5,1,10,100],
-                     'solver':['lbfgs', 'saga'],
-                     'max_iter':[1000,10000,100000]
+                     #'solver':['lbfgs', 'saga'],
+                     #'max_iter':[1000,10000,100000]
                      }
 
 scores = ['balanced_accuracy','precision', 'recall','roc_auc' ]
@@ -40,7 +40,7 @@ for score in scores:
     print(f"# Tuning hyper-parameters for {score}" )
     print()
 
-    clf = GridSearchCV(gbdt, tuned_parameters, cv=10,
+    clf = GridSearchCV(lr, tuned_parameters, cv=10,
                        scoring=score )
     clf.fit(X_train, Y_train)
 
